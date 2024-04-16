@@ -20,7 +20,7 @@ export default function CreateTrip() {
     e.preventDefault();
 
     try {
-      const response = await fetch('http://192.168.80.31:3000/api/trips/create', {
+      const response = await fetch('http://localhost:3000/api/trips/create', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
