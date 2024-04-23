@@ -19,6 +19,7 @@ const config = {
     },
     extend: {
       colors: {
+        heemanshu: '#272e3f',
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
