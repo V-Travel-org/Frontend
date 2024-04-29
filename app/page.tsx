@@ -22,7 +22,7 @@ export default function LoginPage() {
       const response = await axios.post('http://localhost:3000/api/users/login', { usernameOrEmail: email, password });
       console.log('Login successful', response.data);
       localStorage.setItem('token', response.data.token);
-      router.push('/trips');
+      router.push('/home');
     } catch (error: unknown) {
       if (isAxiosError(error)) {
         if (error.response) {

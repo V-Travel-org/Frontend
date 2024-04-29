@@ -29,8 +29,6 @@ export default function page() {
         <Tabs defaultValue="overview" className="space-y-4">
           <TabsList>
             <TabsTrigger value="overview">Overview</TabsTrigger>
-            <TabsTrigger value="rides">Find Rides</TabsTrigger>
-            <TabsTrigger value="host">Host a Ride</TabsTrigger>
           </TabsList>
           <TabsContent value="overview" className="space-y-4">
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
@@ -153,9 +151,6 @@ export default function page() {
                 </CardContent>
               </Card>
             </div>
-          </TabsContent>
-          <TabsContent value="host" className="space-y-4">
-            <CreateTrip/>
           </TabsContent>
         </Tabs>
       </div>
