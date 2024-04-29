@@ -6,7 +6,7 @@ import { cn } from '@/lib/utils';
 import { buttonVariants } from '@/components/ui/button';
 import Login from '@/components/login/login';
 import Register from '@/components/login/register';
-import { ThemeToggle } from "@/components/ui/theme-toggle"
+import { ThemeToggle } from "@/components/layout/ThemeToggle/theme-toggle"
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -16,13 +16,13 @@ export default function RegisterPage() {
   const toggleButtonText = isRegister ? 'Login' : 'Register';
 
   return (
-    <div className="relative hidden h-screen flex-col items-center justify-center md:grid lg:max-w-none lg:grid-cols-2 lg:px-0">
+    <div className="relative h-screen flex-col items-center justify-center md:grid lg:max-w-none lg:grid-cols-2 lg:px-0">
       <div className="absolute right-4 top-4 md:right-8 md:top-8 flex items-center space-x-4">
         <ThemeToggle/>
         <Button
           className={cn(
             buttonVariants({ variant: "ghost" }),
-            "relative"
+            "relative hidden md:inline-block"
           )}
           onClick={() => router.push(toggleRoute)}
         >
@@ -58,10 +58,10 @@ export default function RegisterPage() {
         <Register />
       ) : (
         <Login onLogin={function (email: string, password: string): void {
-                      throw new Error('Function not implemented.');
-                  } } onGoogleLogin={function (): void {
-                      throw new Error('Function not implemented.');
-                  } } />
+            throw new Error('Function not implemented.');
+          } } onGoogleLogin={function (): void {
+            throw new Error('Function not implemented.');
+          } } errorMessage={''} />
       )}
     </div>
   );

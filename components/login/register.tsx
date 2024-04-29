@@ -97,11 +97,17 @@ export default function Register() {
               onChange={(e) => setContactInfo(e.target.value)}
             />
           </div>
-
+          <Button className="w-full" type="submit">
+            Sign Up
+          </Button>
           <div className="flex flex-col items-center justify-center mt-7">
           <div className="flex items-center w-full">
             <hr className="border-gray-500 flex-1" />
-            <div className="px-2 text-sm text-gray-500 whitespace-nowrap">OR</div>
+            <div className="relative flex justify-center text-xs uppercase">
+              <span className="bg-background px-2 text-muted-foreground">
+                Or continue with
+              </span>
+            </div>
             <hr className="border-gray-500 flex-1" />
           </div>
           
@@ -116,20 +122,20 @@ export default function Register() {
               <clipPath id="b">
                 <use xlinkHref="#a" overflow="visible"/>
               </clipPath>
-              <path clip-path="url(#b)" fill="#FBBC05" d="M0 37V11l17 13z"/>
-              <path clip-path="url(#b)" fill="#EA4335" d="M0 11l17 13 7-6.1L48 14V0H0z"/>
-              <path clip-path="url(#b)" fill="#34A853" d="M0 37l30-23 7.9 1L48 0v48H0z"/>
-              <path clip-path="url(#b)" fill="#4285F4" d="M48 48L17 24l-4-3 35-10z"/>
+              <path clipPath="url(#b)" fill="#FBBC05" d="M0 37V11l17 13z"/>
+              <path clipPath="url(#b)" fill="#EA4335" d="M0 11l17 13 7-6.1L48 14V0H0z"/>
+              <path clipPath="url(#b)" fill="#34A853" d="M0 37l30-23 7.9 1L48 0v48H0z"/>
+              <path clipPath="url(#b)" fill="#4285F4" d="M48 48L17 24l-4-3 35-10z"/>
             </svg>
             Sign in with Google
           </Button>
         </div>
+        <p className="text-center text-sm mt-4 md:hidden">
+          Already have an account? <a href="/login" className="underline hover:text-blue-700 focus:text-blue-700">Sign in</a>
+        </p>
         <p className="text-center text-sm mt-4">
           By clicking continue, you agree to our <a href="/terms" className="underline hover:text-blue-700 focus:text-blue-700">Terms of Service</a> and <a href="/privacy" className="underline hover:text-blue-700 focus:text-blue-700">Privacy Policy</a>.
         </p>
-          <Button className="w-full" type="submit">
-            Register
-          </Button>
         </form>
       </CardContent>
     </Card>

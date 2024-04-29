@@ -1,10 +1,10 @@
 'use client'
-// Use the updated import statements based on your project's structure.
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { CardTitle, CardDescription, CardHeader, CardContent, Card } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { jwtDecode } from 'jwt-decode';
 
 export default function CreateTrip() {
   const [organiserId, setOrganiserId] = useState('');
@@ -14,16 +14,30 @@ export default function CreateTrip() {
   const [currentCapacity, setCurrentCapacity] = useState('');
   const [modeOfTravel, setModeOfTravel] = useState('');
   const [price, setPrice] = useState('');
-  const [status, setStatus] = useState('');
 
-  const handleSubmit = async (e) => {
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      const decoded: any = jwtDecode(token);
+      setOrganiserId(decoded.user.id);
+      console.log('Decoded token:', decoded);
+    }
+  }, []);
+
+  const handleSubmit = async (e: { preventDefault: () => void; }) => {
     e.preventDefault();
+    const token = localStorage.getItem('token');
+    if (!token) {
+      alert('You are not logged in.');
+      return;
+    }
 
     try {
       const response = await fetch('http://localhost:3000/api/trips/create', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
         },
         body: JSON.stringify({
           organiserId,
@@ -33,7 +47,6 @@ export default function CreateTrip() {
           currentCapacity: parseInt(currentCapacity),
           modeOfTravel,
           price: parseFloat(price),
-          status,
         }),
       });
 
@@ -56,15 +69,6 @@ export default function CreateTrip() {
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="organiserId">Organiser ID</Label>
-            <Input
-              id="organiserId"
-              required
-              value={organiserId}
-              onChange={(e) => setOrganiserId(e.target.value)}
-            />
-          </div>
           <div className="space-y-2">
             <Label htmlFor="destination">Destination</Label>
             <Input
@@ -122,15 +126,6 @@ export default function CreateTrip() {
               step="0.01"
               value={price}
               onChange={(e) => setPrice(e.target.value)}
-            />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="status">Status</Label>
-            <Input
-              id="status"
-              required
-              value={status}
-              onChange={(e) => setStatus(e.target.value)}
             />
           </div>
           <Button className="w-full" type="submit">

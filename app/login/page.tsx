@@ -3,21 +3,44 @@ import { useState } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import { Button, buttonVariants } from "@/components/ui/button";
 import { cn } from '@/lib/utils';
+import axios, { isAxiosError } from 'axios';
 import Login from '@/components/login/login';
 import Register from '@/components/login/register';
-import { ThemeToggle } from "@/components/ui/theme-toggle"
+import { ThemeToggle } from "@/components/layout/ThemeToggle/theme-toggle"
 
 export default function LoginPage() {
   const [email] = useState('');
+  const [error, setError] = useState('');
   const router = useRouter();
 
   const isLogin = usePathname() === '/login';
   const toggleRoute = isLogin ? '/register' : '/login';
   const toggleButtonText = isLogin ? 'Register' : 'Login';
 
-  const handleLogin = (email: string, password: string) => {
-    // Implement login logic
-    console.log('Login with:', email, password);
+  const handleLogin = async (email: string, password: string) => {
+    try {
+      const response = await axios.post('http://localhost:3000/api/users/login', { usernameOrEmail: email, password });
+      console.log('Login successful', response.data);
+      localStorage.setItem('token', response.data.token);
+      router.push('/trips');
+    } catch (error: unknown) {
+      if (isAxiosError(error)) {
+        if (error.response) {
+          switch (error.response.status) {
+            case 404:
+              setError('User not found. Please check your credentials or register.');
+              break;
+            case 400:
+              setError('Invalid credentials');
+              break;
+            default:
+              break;
+          }
+        }
+      } else {
+        console.error('Login error:', error);
+      }
+    }
   };
 
   const handleGoogleLogin = () => {
@@ -32,13 +55,13 @@ export default function LoginPage() {
   };
   
   return (
-    <div className=" relative hidden h-screen flex-col items-center justify-center md:grid lg:max-w-none lg:grid-cols-2 lg:px-0">
+    <div className=" relative h-screen flex-col items-center justify-center md:grid lg:max-w-none lg:grid-cols-2">
       <div className="absolute right-4 top-4 md:right-8 md:top-8 flex items-center space-x-4">
         <ThemeToggle/>
         <Button
           className={cn(
             buttonVariants({ variant: "ghost" }),
-            "relative"
+            "relative hidden md:inline-block"
           )}
           onClick={() => router.push(toggleRoute)}
         >
@@ -71,7 +94,7 @@ export default function LoginPage() {
           </div>
       </div>
       {isLogin ? (
-        <Login onLogin={handleLogin} onGoogleLogin={handleGoogleLogin} />
+        <Login onLogin={handleLogin} onGoogleLogin={handleGoogleLogin} errorMessage={error} />
       ) : (
         <Register />
       )}

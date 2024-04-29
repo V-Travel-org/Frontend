@@ -8,9 +8,10 @@ import { Card, CardHeader, CardContent, CardTitle, CardDescription } from "@/com
 type LoginProps = {
   onLogin: (usernameOrEmail: string, password: string) => void;
   onGoogleLogin: () => void;
+  errorMessage: string;
 };
 
-const Login = ({ onLogin, onGoogleLogin }: LoginProps) => {
+const Login = ({ onLogin, onGoogleLogin, errorMessage }: LoginProps) => {
   const [usernameOrEmail, setUsernameOrEmail] = useState('');
   const [password, setPassword] = useState('');
   const router = useRouter();
@@ -40,11 +41,16 @@ const Login = ({ onLogin, onGoogleLogin }: LoginProps) => {
   return (
     <Card className="mx-auto max-w-sm">
       <CardHeader className="text-center">
-        <CardTitle className="text-2xl font-bold">Login</CardTitle>
+        <CardTitle className="text-2xl font-bold">Welcome Back</CardTitle>
         <CardDescription>Enter your username or email below to login to your account</CardDescription>
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-4">
+          {errorMessage && (
+            <div className="mb-4 p-2 text-center text-sm text-red-600 bg-red-100 rounded">
+              {errorMessage}
+            </div>
+          )}
           <div className="space-y-2">
             <Input
               id="usernameOrEmail"
@@ -73,11 +79,15 @@ const Login = ({ onLogin, onGoogleLogin }: LoginProps) => {
           </Button>
 
           <div className="flex flex-col items-center justify-center mt-7">
-            <div className="flex items-center w-full">
-              <hr className="border-gray-500 flex-1" />
-              <div className="px-2 text-sm text-gray-500 whitespace-nowrap">OR</div>
-              <hr className="border-gray-500 flex-1" />
+          <div className="flex items-center w-full">
+            <hr className="border-gray-500 flex-1" />
+            <div className="relative flex justify-center text-xs uppercase">
+              <span className="bg-background px-2 text-muted-foreground">
+                Or continue with
+              </span>
             </div>
+            <hr className="border-gray-500 flex-1" />
+          </div>
             
             <Button className="w-full mt-2 flex items-center justify-center bg-white border text-black border-gray-300 hover:bg-gray-100" type="button" onClick={onGoogleLogin}>
             <svg xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink" className="h-4 w-4 mr-2" viewBox="0 0 48 48">
@@ -87,14 +97,17 @@ const Login = ({ onLogin, onGoogleLogin }: LoginProps) => {
               <clipPath id="b">
                 <use xlinkHref="#a" overflow="visible"/>
               </clipPath>
-              <path clip-path="url(#b)" fill="#FBBC05" d="M0 37V11l17 13z"/>
-              <path clip-path="url(#b)" fill="#EA4335" d="M0 11l17 13 7-6.1L48 14V0H0z"/>
-              <path clip-path="url(#b)" fill="#34A853" d="M0 37l30-23 7.9 1L48 0v48H0z"/>
-              <path clip-path="url(#b)" fill="#4285F4" d="M48 48L17 24l-4-3 35-10z"/>
+              <path clipPath="url(#b)" fill="#FBBC05" d="M0 37V11l17 13z"/>
+              <path clipPath="url(#b)" fill="#EA4335" d="M0 11l17 13 7-6.1L48 14V0H0z"/>
+              <path clipPath="url(#b)" fill="#34A853" d="M0 37l30-23 7.9 1L48 0v48H0z"/>
+              <path clipPath="url(#b)" fill="#4285F4" d="M48 48L17 24l-4-3 35-10z"/>
             </svg>
               Sign in with Google
             </Button>
           </div>
+          <p className="text-center text-sm mt-4 md:hidden">
+            Don't have an account? <a href="/register" className="underline hover:text-blue-700 focus:text-blue-700">Sign up</a>
+          </p>
         </form>
       </CardContent>
     </Card>
