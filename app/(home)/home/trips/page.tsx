@@ -1,6 +1,7 @@
 'use client'
 import { CalendarDateRangePicker } from "@/components/date-range-picker";
 import CreateTrip from "@/components/trips/createTrip";
+import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -13,7 +14,8 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { DrawerDialog } from "@/components/ui/drawerdialog";
 import { StarRating } from "@/components/ui/star-rating";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import axios from "axios";
 
 interface Ride{
   username: string;
@@ -24,6 +26,11 @@ interface Ride{
   totalCapacity: number;
   status: 'open' | 'closed';
   rating: number;
+}
+
+interface ISuggestion {
+  label: string;
+  value: string;
 }
 
 const rides: Ride[] = [
@@ -39,10 +46,51 @@ const rides: Ride[] = [
 export default function page() {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [selectedRide, setSelectedRide] = useState<Ride | null>(null);
+  const [allTrips, setAllTrips] = useState([]);
+  const [from, setFrom] = useState<string>("");
+  const [fromSuggestions, setFromSuggestions] = useState<ISuggestion[]>([]);
+  const [destination, setDestination] = useState<string>("");
+  const [destinationSuggestions, setDestinationSuggestions] = useState<ISuggestion[]>([]);
+
+  useEffect(() => {
+    fetch('http://localhost:3000/api/trips/getAllTrips')
+      .then(response => response.json())
+      .then(data => setAllTrips(data))
+      .catch(error => console.error('Error fetching data:', error));
+  }, []);
 
   const handleCardClick = (ride: Ride) => {
     setSelectedRide(ride);
     setDrawerOpen(true);
+  };
+
+  const handleAutocomplete = async (
+    input: string,
+    type: "from" | "destination"
+  ) => {
+    if (!input) {
+      type === "from" ? setFromSuggestions([]) : setDestinationSuggestions([]);
+      return;
+    }
+
+    const apiKey = "pk.dec15f483f420b06eb90afa6878cdccd";
+    const countrycodes = "IN"; // ISO 3166-1 alpha-2 code for India
+    try {
+      const response = await axios.get(
+        `https://api.locationiq.com/v1/autocomplete.php?key=${apiKey}&q=${input}&countrycodes=${countrycodes}`
+      );
+      if (response.data) {
+        const suggestions: ISuggestion[] = response.data.map((item: any) => ({
+          label: item.display_name,
+          value: item.display_name,
+        }));
+        type === "from"
+          ? setFromSuggestions(suggestions)
+          : setDestinationSuggestions(suggestions);
+      }
+    } catch (error) {
+      console.error("Error fetching location data:", error);
+    }
   };
 
   return (
@@ -82,10 +130,27 @@ export default function page() {
                   </svg>
                 </CardHeader>
                 <CardContent>
-                  <div className="text-xl font-bold">3891 Ranchview, Vijayawada 520001</div>
-                  <p className="text-xs text-muted-foreground">
-                  My Location
-                  </p>
+                  <Input
+                  value={from}
+                  onChange={(e) => {
+                    setFrom(e.target.value);
+                    handleAutocomplete(e.target.value, "from");
+                  }}
+                    placeholder="Select your starting location"
+                  />
+                  {fromSuggestions.length > 0 && (
+                    <ul className="absolute z-10 w-full bg-white shadow-lg max-h-60 overflow-auto">
+                    {fromSuggestions.map((suggestion, index) => (
+                      <li key={index} className="p-2 hover:bg-gray-100 cursor-pointer"
+                          onClick={() => {
+                            setFrom(suggestion.value);
+                            setFromSuggestions([]);
+                          }}>
+                        {suggestion.label}
+                      </li>
+                    ))}
+                  </ul>
+                  )}
                 </CardContent>
               </Card>
               <Card>
@@ -110,10 +175,27 @@ export default function page() {
                   </svg>
                 </CardHeader>
                 <CardContent>
-                  <div className="text-xl font-bold">1901 street, KR Market, Vijayawada</div>
-                  <p className="text-xs text-muted-foreground">
-                    Work
-                  </p>
+                  <Input
+                    value={destination}
+                    onChange={(e) => {
+                      setDestination(e.target.value);
+                      handleAutocomplete(e.target.value, "destination");
+                    }}
+                      placeholder="Select your destination"
+                    />
+                    {destinationSuggestions.length > 0 && (
+                      <ul className="absolute z-10 w-full bg-white shadow-lg max-h-60 overflow-auto">
+                      {destinationSuggestions.map((suggestion, index) => (
+                        <li key={index} className="p-2 hover:bg-gray-100 cursor-pointer"
+                            onClick={() => {
+                              setDestination(suggestion.value);
+                              setDestinationSuggestions([]);
+                            }}>
+                          {suggestion.label}
+                        </li>
+                      ))}
+                    </ul>
+                    )}
                 </CardContent>
               </Card>
             </div>

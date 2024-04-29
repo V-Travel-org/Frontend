@@ -93,10 +93,10 @@ function ConfirmRideForm({ className, ride }: {className?: string, ride: Ride}) 
       </div>
       <div className={cardStyle}>
         <div className={labelStyle}>Capacity</div>
-        <div className={valueStyle} id="capacity">{`${ride.currentCapacity}/${ride.totalCapacity}`}</div>
+        <div className={valueStyle} id="capacity">{`${ride.totalCapacity - ride.currentCapacity}/${ride.totalCapacity}`}</div>
       </div>
       <div className={cardStyle}>
-        <div className={labelStyle}>Total Capacity</div>
+        <div className={labelStyle}>Destination</div>
         <div className={valueStyle} id="destination">{ride.destination}</div>
       </div>
       <div className={cardStyle}>

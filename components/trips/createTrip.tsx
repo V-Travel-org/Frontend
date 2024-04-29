@@ -23,12 +23,9 @@ export default function CreateTrip() {
   const [from, setFrom] = useState<string>("");
   const [fromSuggestions, setFromSuggestions] = useState<ISuggestion[]>([]);
   const [destination, setDestination] = useState<string>("");
-  const [destinationSuggestions, setDestinationSuggestions] = useState<
-    ISuggestion[]
-  >([]);
+  const [destinationSuggestions, setDestinationSuggestions] = useState<ISuggestion[]>([]);
   const [departureTime, setDepartureTime] = useState<string>("");
   const [capacity, setCapacity] = useState<string>("");
-  const [currentCapacity, setCurrentCapacity] = useState<string>("");
   const [modeOfTravel, setModeOfTravel] = useState<string>("");
   const [price, setPrice] = useState<string>("");
 
@@ -103,7 +100,6 @@ export default function CreateTrip() {
           destination,
           departureTime,
           capacity: parseInt(capacity),
-          currentCapacity: parseInt(currentCapacity),
           modeOfTravel,
           price: parseFloat(price),
         }),
@@ -202,16 +198,6 @@ export default function CreateTrip() {
               type="number"
               value={capacity}
               onChange={(e) => setCapacity(e.target.value)}
-            />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="currentCapacity">Current Capacity</Label>
-            <Input
-              id="currentCapacity"
-              required
-              type="number"
-              value={currentCapacity}
-              onChange={(e) => setCurrentCapacity(e.target.value)}
             />
           </div>
           <div className="space-y-2">
