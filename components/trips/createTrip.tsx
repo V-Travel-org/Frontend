@@ -8,6 +8,7 @@ import { jwtDecode } from 'jwt-decode';
 
 export default function CreateTrip() {
   const [organiserId, setOrganiserId] = useState('');
+  const [from, setFrom] = useState('');
   const [destination, setDestination] = useState('');
   const [departureTime, setDepartureTime] = useState('');
   const [capacity, setCapacity] = useState('');
@@ -41,6 +42,7 @@ export default function CreateTrip() {
         },
         body: JSON.stringify({
           organiserId,
+          from,
           destination,
           departureTime,
           capacity: parseInt(capacity),
@@ -69,6 +71,15 @@ export default function CreateTrip() {
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-4">
+        <div className="space-y-2">
+            <Label htmlFor="from">From</Label>
+            <Input
+              id="from"
+              required
+              value={from}
+              onChange={(e) => setFrom(e.target.value)}
+            />
+          </div>
           <div className="space-y-2">
             <Label htmlFor="destination">Destination</Label>
             <Input
