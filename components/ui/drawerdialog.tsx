@@ -3,14 +3,8 @@ import * as React from "react"
 import { cn } from "@/lib/utils"
 import { useMediaQuery } from "@/hooks/use-media-query"
 import { Button } from "@/components/ui/button"
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog"
+import axios from "axios"
+import { useToast } from "./use-toast"
 import {
   Drawer,
   DrawerClose,
@@ -21,9 +15,10 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from "@/components/ui/drawer"
-import { Label } from "@/components/ui/label"
+
 
 interface Ride {
+  _id: string,
   fullName: string;
   modeOfTravel: string;
   currentCapacity: number;
@@ -79,9 +74,25 @@ export function DrawerDialog({open, setOpen, selectedRide}: {open: boolean, setO
 }
 
 function ConfirmRideForm({ className, ride }: {className?: string, ride: Ride}) {
+  const {toast} = useToast();
   const labelStyle = "block text-sm font-medium text-gray-700";
   const valueStyle = "mt-1 block w-full rounded-md border-gray-300 shadow-sm text-gray-600";
   const cardStyle = "bg-white shadow overflow-hidden rounded-lg px-4 py-5 sm:p-6";
+  const handleJoinRide = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      const response = await axios.post(`http://localhost:3000/api/trips/requestJoinTrip/${ride._id}`, {}, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+      alert('Request to join sent successfully!');
+      console.log(response.data);
+    } catch (error) {
+      console.error('Error sending join request:', error);
+      alert('Failed to send join request.');
+    }
+  };
 
   return (
     <div className={cn("grid items-start gap-4", className)}>
@@ -111,7 +122,7 @@ function ConfirmRideForm({ className, ride }: {className?: string, ride: Ride}) 
         <div className={labelStyle}>Rating</div>
         <div className={valueStyle} id="rating">{ride.rating}</div>
       </div>
-      <Button onClick={() => {}}>Request to Join</Button>
+      <Button onClick={handleJoinRide}>Request to Join</Button>
     </div>
   );
 }

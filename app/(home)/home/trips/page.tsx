@@ -19,6 +19,7 @@ import axios from "axios";
 import { Separator } from "@/components/ui/separator";
 
 interface Ride{
+  _id: string,
   fullName: string;
   modeOfTravel: string;
   currentCapacity: number;
@@ -33,16 +34,6 @@ interface ISuggestion {
   label: string;
   value: string;
 }
-
-// const rides: Ride[] = [
-//   { fullName: 'Alice Johnson', modeOfTravel: 'Toyota Camry', currentCapacity: 3,destination: 'Central Park', departureTime: '8:00 AM', totalCapacity: 4, status: 'open', rating: 4.8},
-//   { fullName: 'Bob Smith', modeOfTravel: 'Honda Civic', currentCapacity: 2, destination: 'PN Bus Station', departureTime: '9:00 AM', totalCapacity: 3, status: 'closed', rating: 4.0},
-//   { fullName: 'Carol Taylor', modeOfTravel: 'Ford Focus', currentCapacity: 1, destination: 'Train Station', departureTime: '10:00 AM', totalCapacity: 2, status: 'open', rating: 3.3},
-//   { fullName: 'David Brown', modeOfTravel: 'Chevy Malibu', currentCapacity: 3, destination: 'Central Library', departureTime: '11:00 AM', totalCapacity: 4, status: 'closed', rating: 3.5},
-//   { fullName: 'Eve White', modeOfTravel: 'Nissan Altima', currentCapacity: 4, destination: 'Benz Circle', departureTime: '12:00 PM', totalCapacity: 5, status: 'open', rating: 3.8},
-//   { fullName: 'Frank Black', modeOfTravel: 'Hyundai Sonata', currentCapacity: 4, destination: 'NTR Circle', departureTime: '1:00 PM', totalCapacity: 5, status: 'closed', rating: 4.2},
-//   { fullName: 'Grace Green', modeOfTravel: 'Kia Optima', currentCapacity: 2, destination: 'Airport', departureTime: '2:00 PM', totalCapacity: 3, status: 'open', rating: 4.5},
-// ];
 
 export default function page() {
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -61,7 +52,7 @@ export default function page() {
           ...trip,
           fullName: trip.organiserId ? trip.organiserId.fullName : 'Unknown Organizer',
           modeOfTravel: trip.modeOfTravel,
-          currentCapacity: trip.capacity - trip.currentCapacity,
+          currentCapacity: trip.capacity,
           destination: trip.destination,
           departureTime: trip.departureTime,
           totalCapacity: trip.capacity,
@@ -220,7 +211,7 @@ export default function page() {
                 {allTrips.map((ride, index) => (
                   <Card key={index} className="hover:bg-accent transition-colors duration-300" onClick={() => handleCardClick(ride)}>
                     <CardHeader>
-                      <CardTitle>{ride.destination}</CardTitle>
+                      <CardTitle>{ride.destination.split(',')[0]}</CardTitle>
                     </CardHeader>
                     <CardContent>
                       <CardDescription>
