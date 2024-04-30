@@ -24,7 +24,7 @@ import {
 import { Label } from "@/components/ui/label"
 
 interface Ride {
-  username: string;
+  fullName: string;
   modeOfTravel: string;
   currentCapacity: number;
   totalCapacity: number;

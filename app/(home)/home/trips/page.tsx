@@ -16,9 +16,10 @@ import { DrawerDialog } from "@/components/ui/drawerdialog";
 import { StarRating } from "@/components/ui/star-rating";
 import { useState, useEffect } from "react";
 import axios from "axios";
+import { Separator } from "@/components/ui/separator";
 
 interface Ride{
-  username: string;
+  fullName: string;
   modeOfTravel: string;
   currentCapacity: number;
   destination: string;
@@ -33,20 +34,20 @@ interface ISuggestion {
   value: string;
 }
 
-const rides: Ride[] = [
-  { username: 'Alice Johnson', modeOfTravel: 'Toyota Camry', currentCapacity: 3,destination: 'Central Park', departureTime: '8:00 AM', totalCapacity: 4, status: 'open', rating: 4.8},
-  { username: 'Bob Smith', modeOfTravel: 'Honda Civic', currentCapacity: 2, destination: 'PN Bus Station', departureTime: '9:00 AM', totalCapacity: 3, status: 'closed', rating: 4.0},
-  { username: 'Carol Taylor', modeOfTravel: 'Ford Focus', currentCapacity: 1, destination: 'Train Station', departureTime: '10:00 AM', totalCapacity: 2, status: 'open', rating: 3.3},
-  { username: 'David Brown', modeOfTravel: 'Chevy Malibu', currentCapacity: 3, destination: 'Central Library', departureTime: '11:00 AM', totalCapacity: 4, status: 'closed', rating: 3.5},
-  { username: 'Eve White', modeOfTravel: 'Nissan Altima', currentCapacity: 4, destination: 'Benz Circle', departureTime: '12:00 PM', totalCapacity: 5, status: 'open', rating: 3.8},
-  { username: 'Frank Black', modeOfTravel: 'Hyundai Sonata', currentCapacity: 4, destination: 'NTR Circle', departureTime: '1:00 PM', totalCapacity: 5, status: 'closed', rating: 4.2},
-  { username: 'Grace Green', modeOfTravel: 'Kia Optima', currentCapacity: 2, destination: 'Airport', departureTime: '2:00 PM', totalCapacity: 3, status: 'open', rating: 4.5},
-];
+// const rides: Ride[] = [
+//   { fullName: 'Alice Johnson', modeOfTravel: 'Toyota Camry', currentCapacity: 3,destination: 'Central Park', departureTime: '8:00 AM', totalCapacity: 4, status: 'open', rating: 4.8},
+//   { fullName: 'Bob Smith', modeOfTravel: 'Honda Civic', currentCapacity: 2, destination: 'PN Bus Station', departureTime: '9:00 AM', totalCapacity: 3, status: 'closed', rating: 4.0},
+//   { fullName: 'Carol Taylor', modeOfTravel: 'Ford Focus', currentCapacity: 1, destination: 'Train Station', departureTime: '10:00 AM', totalCapacity: 2, status: 'open', rating: 3.3},
+//   { fullName: 'David Brown', modeOfTravel: 'Chevy Malibu', currentCapacity: 3, destination: 'Central Library', departureTime: '11:00 AM', totalCapacity: 4, status: 'closed', rating: 3.5},
+//   { fullName: 'Eve White', modeOfTravel: 'Nissan Altima', currentCapacity: 4, destination: 'Benz Circle', departureTime: '12:00 PM', totalCapacity: 5, status: 'open', rating: 3.8},
+//   { fullName: 'Frank Black', modeOfTravel: 'Hyundai Sonata', currentCapacity: 4, destination: 'NTR Circle', departureTime: '1:00 PM', totalCapacity: 5, status: 'closed', rating: 4.2},
+//   { fullName: 'Grace Green', modeOfTravel: 'Kia Optima', currentCapacity: 2, destination: 'Airport', departureTime: '2:00 PM', totalCapacity: 3, status: 'open', rating: 4.5},
+// ];
 
 export default function page() {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [selectedRide, setSelectedRide] = useState<Ride | null>(null);
-  const [allTrips, setAllTrips] = useState([]);
+  const [allTrips, setAllTrips] = useState<Ride[]>([]);
   const [from, setFrom] = useState<string>("");
   const [fromSuggestions, setFromSuggestions] = useState<ISuggestion[]>([]);
   const [destination, setDestination] = useState<string>("");
@@ -55,7 +56,21 @@ export default function page() {
   useEffect(() => {
     fetch('http://localhost:3000/api/trips/getAllTrips')
       .then(response => response.json())
-      .then(data => setAllTrips(data))
+      .then(data => {
+        const trips = data.map((trip:any) => ({
+          ...trip,
+          fullName: trip.organiserId ? trip.organiserId.fullName : 'Unknown Organizer',
+          modeOfTravel: trip.modeOfTravel,
+          currentCapacity: trip.capacity - trip.currentCapacity,
+          destination: trip.destination,
+          departureTime: trip.departureTime,
+          totalCapacity: trip.capacity,
+          status: trip.status,
+          rating: 5, // Hardcoded rating for now
+        }));
+        setAllTrips(trips);
+        console.log('Fetched data:', trips);
+      })
       .catch(error => console.error('Error fetching data:', error));
   }, []);
 
@@ -100,10 +115,6 @@ export default function page() {
           <h2 className="text-3xl font-bold tracking-tight">
             Hi, Ready for your next ride?
           </h2>
-          <div className="hidden md:flex items-center space-x-2">
-            <CalendarDateRangePicker />
-            <Button>Search for Carpool</Button>
-          </div>
         </div>
         <Tabs defaultValue="rides" className="space-y-4">
           <TabsList>
@@ -198,17 +209,22 @@ export default function page() {
                     )}
                 </CardContent>
               </Card>
+              <div className="flex flex-col md:flex-row items-center space-x-0 md:space-x-4">
+                <div className="mb-md:mb-0"><CalendarDateRangePicker /></div>
+                <Button>Search for Carpool</Button>
+              </div>
             </div>
+            <Separator />
             <ScrollArea className="space-y-4 p-4 h-96 overflow-y-auto">
               <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-                {rides.map((ride, index) => (
+                {allTrips.map((ride, index) => (
                   <Card key={index} className="hover:bg-accent transition-colors duration-300" onClick={() => handleCardClick(ride)}>
                     <CardHeader>
                       <CardTitle>{ride.destination}</CardTitle>
                     </CardHeader>
                     <CardContent>
                       <CardDescription>
-                        Driver: {ride.username}
+                        Organizer: {ride.fullName}
                       </CardDescription>
                       <CardDescription>
                         Vehicle: {ride.modeOfTravel}

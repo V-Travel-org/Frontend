@@ -30,7 +30,7 @@ const Login = ({ onLogin, onGoogleLogin, errorMessage }: LoginProps) => {
       });
 
       if (response.status === 200){
-        router.push('/trips');
+        router.push('/home');
       }
     } catch (error) {
       console.error('Error:', error);
